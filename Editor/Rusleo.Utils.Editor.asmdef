@@ -1,8 +1,8 @@
 {
     "name": "Rusleo.Utils.Editor",
-    "rootNamespace": "",
+    "rootNamespace": "Rusleo.Utils.Editor",
     "references": [
-        "GUID:d3d61a337f259a54691730971ad26e8a"
+        "GUID:a526554ccd4e69d429957b4d08706330"
     ],
     "includePlatforms": [
         "Editor"

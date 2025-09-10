@@ -1,7 +1,7 @@
-﻿{
+{
   "name": "com.rusleo.utils",
-  "displayName": "Rusleo Utils",
-  "version": "1.0.0",
+  "displayName": "Rusleo.Utils",
+  "version": "1.1.0",
   "unity": "2022.3",
   "description": "Utility and logging tools created by Rusleo to improve productivity and reusability across Unity projects.",
   "author": {

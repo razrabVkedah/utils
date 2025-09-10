@@ -1,3 +1,14 @@
 {
-	"name": "Rusleo.Utils.Runtime"
+    "name": "Rusleo.Utils.Runtime",
+    "rootNamespace": "Rusleo.Utils.Runtime",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

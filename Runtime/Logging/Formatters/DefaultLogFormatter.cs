@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+
 namespace Rusleo.Utils.Runtime.Logging.Formatters
 {
     public sealed class DefaultLogFormatter : ILogFormatter
@@ -37,7 +38,7 @@ namespace Rusleo.Utils.Runtime.Logging.Formatters
                 var list = string.Join(", ", ordered.Select(kv => $"{kv.Key}={kv.Value}"));
                 sb.Append("  | ").Append(list);
 
-                var trimmed = Math.Max(0, e.Metadata.Count - _opt.MetadataMaxCount);
+                var trimmed = System.Math.Max(0, e.Metadata.Count - _opt.MetadataMaxCount);
                 if (trimmed > 0) sb.Append($" (+{trimmed} more)");
             }
 

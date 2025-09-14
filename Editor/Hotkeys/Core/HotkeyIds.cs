@@ -15,6 +15,8 @@
         public const string CreateFolder = Group + "/Create Folder";
         public const string FocusConsole = Group + "/Focus Console";
         public const string RevealPersistentData = Group + "/Reveal PersistentDataPath";
-
+        public const string SetActiveToggle = Group + "/GameObject/Set Active (Toggle)";
+        public const string SetActiveOn = Group + "/GameObject/Set Active (On)";
+        public const string SetActiveOff = Group + "/GameObject/Set Active (Off)";
     }
 }

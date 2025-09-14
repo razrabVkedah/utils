@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using Rusleo.Utils.Editor.Hotkeys.Actions;
+using UnityEditor;
 
 namespace Rusleo.Utils.Editor.Hotkeys.Core
 {
@@ -26,5 +27,14 @@ namespace Rusleo.Utils.Editor.Hotkeys.Core
 
         [MenuItem("Rusleo/Hotkeys/Reveal persistentDataPath (Ctrl+Shift+Alt+P)", priority = 13)]
         private static void MenuRevealPersistentData() => Actions.RevealPersistentDataHotkey.Execute();
+
+        [MenuItem("Rusleo/Hotkeys/GameObject — Set Active (Toggle)  [Ctrl+Shift+H]")]
+        private static void Menu_SetActiveToggle() => SetActiveToggleHotkey.Execute();
+
+        [MenuItem("Rusleo/Hotkeys/GameObject — Set Active (On)      [Ctrl+Shift+U]")]
+        private static void Menu_SetActiveOn() => SetActiveOnHotkey.Execute();
+
+        [MenuItem("Rusleo/Hotkeys/GameObject — Set Active (Off)     [Ctrl+Shift+J]")]
+        private static void Menu_SetActiveOff() => SetActiveOffHotkey.Execute();
     }
 }

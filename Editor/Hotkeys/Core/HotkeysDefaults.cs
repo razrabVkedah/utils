@@ -26,6 +26,15 @@ namespace Rusleo.Utils.Editor.Hotkeys.Core
 
             // persistentDataPath: Ctrl/Cmd + Shift + Alt + P
             { HotkeyIds.RevealPersistentData, Make(KeyCode.P, action: true, shift: true, alt: true) },
+            
+            // Ctrl/Cmd+Shift+H
+            { HotkeyIds.SetActiveToggle, Make(KeyCode.H, action: true, shift: true, alt: false) },
+            
+            // Ctrl/Cmd+Shift+U
+            { HotkeyIds.SetActiveOn, Make(KeyCode.U, action: true, shift: true, alt: false) },
+            
+            // Ctrl/Cmd+Shift+J
+            { HotkeyIds.SetActiveOff, Make(KeyCode.J, action: true, shift: true, alt: false) },
         };
 
         public static bool TryGet(string id, out ShortcutBinding binding) => _defaults.TryGetValue(id, out binding);

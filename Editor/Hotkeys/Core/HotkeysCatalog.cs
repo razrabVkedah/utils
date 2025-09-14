@@ -53,6 +53,22 @@ namespace Rusleo.Utils.Editor.Hotkeys.Core
                 DisplayName = "Reveal persistentDataPath",
                 Description = "Открыть системный проводник на Application.persistentDataPath."
             },
+            new Entry {
+                Id = HotkeyIds.SetActiveToggle,
+                DisplayName = "GameObject — Set Active (Toggle)",
+                Description = "Переключает активность выбранных объектов (activeSelf)."
+            },
+            new Entry {
+                Id = HotkeyIds.SetActiveOn,
+                DisplayName = "GameObject — Set Active (On)",
+                Description = "Включает активность у выбранных объектов."
+            },
+            new Entry {
+                Id = HotkeyIds.SetActiveOff,
+                DisplayName = "GameObject — Set Active (Off)",
+                Description = "Выключает активность у выбранных объектов."
+            },
+
         };
 
         public static IReadOnlyList<Entry> All => _all;

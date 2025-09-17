@@ -75,6 +75,33 @@ namespace Rusleo.Utils.Editor.Windows.IconBrowser
 
         private void OnGUI()
         {
+            if (_treeView == null || _index == null) 
+            {
+                // Мягкая инициализация на случай сброса домена/серилизации
+                try
+                {
+                    if (_index == null) _index = new IconIndex();
+                    if (_searchField == null) _searchField = new SearchField();
+                    EnsureHeader();
+                    _treeState ??= new TreeViewState();
+
+                    _treeView ??= new IconTreeView(_treeState, _header, _index)
+                    {
+                        ResolveName = baseName => IconVariantResolver.ResolveSafeName(baseName, _preferDark, _preferOn)
+                    };
+                    _treeView.SetCopyMode(_copyMode);
+                    _index.Rebuild(_useLegacySeeds, _expandMorphology, _aggressiveLegacyScan);
+                    _treeView.ReloadFromIndex();
+                    _lastSettingsKey = MakeKey();
+                }
+                catch
+                {
+                    /* дождёмся следующего GUI цикла */
+                }
+
+                return;
+            }
+
             using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
             {
                 _treeView.searchString = _searchField.OnGUI(_treeView.searchString);

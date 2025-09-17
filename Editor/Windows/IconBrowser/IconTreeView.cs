@@ -20,12 +20,23 @@ namespace Rusleo.Utils.Editor.Windows.IconBrowser
 
         public Func<string, string> ResolveName; // injected
 
-        private readonly GUIStyle _tagOn = new(EditorStyles.miniLabel) { fontStyle = FontStyle.Bold };
-
-        private readonly GUIStyle _tagOff = new(EditorStyles.miniLabel)
-            { normal = { textColor = new Color(1f, 1f, 1f, 0.35f) } };
+        private GUIStyle _tagOn;
+        private GUIStyle _tagOff;
 
         private int _iconColumnWidth;
+
+        private void EnsureStyles()
+        {
+            if (_tagOn == null)
+                _tagOn = new GUIStyle(EditorStyles.miniLabel) { fontStyle = FontStyle.Bold };
+
+            if (_tagOff == null)
+            {
+                _tagOff = new GUIStyle(EditorStyles.miniLabel);
+                var c = _tagOff.normal.textColor;
+                _tagOff.normal.textColor = new Color(c.r, c.g, c.b, 0.35f);
+            }
+        }
 
         public IconTreeView(TreeViewState state, MultiColumnHeader header, IconIndex index) : base(state, header)
         {
@@ -136,6 +147,7 @@ namespace Rusleo.Utils.Editor.Windows.IconBrowser
 
         protected override void RowGUI(RowGUIArgs args)
         {
+            EnsureStyles();
             var item = args.item;
 
             // Col 0: icon (centered)

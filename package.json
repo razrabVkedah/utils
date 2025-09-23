@@ -1,7 +1,7 @@
 {
   "name": "com.rusleo.utils",
   "displayName": "Rusleo.Utils",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "unity": "2022.3",
   "description": "Utility and logging tools created by Rusleo to improve productivity and reusability across Unity projects.",
   "author": {
@@ -15,5 +15,13 @@
   ],
   "dependencies": {
     "com.unity.mathematics": "1.2.6"
-  }
+  },
+  "documentationUrl": "https://github.com/razrabVkedah/com.rusleo.utils#readme",
+  "samples": [
+    {
+      "displayName": "InGame Demo",
+      "description": "Пример использования утилит в игровом окружении.",
+      "path": "Samples~/InGame"
+    }
+  ]
 }

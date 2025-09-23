@@ -97,7 +97,7 @@ MonoBehaviour:
   addIndexPrefix: 1
   emptyHeight: 100
   spacing: 5
-  settingsCategory: {fileID: 1683630029428847796}
+  settingsCategoryTab: {fileID: 1683630029428847796}
 --- !u!222 &3878841137935501373
 CanvasRenderer:
   m_ObjectHideFlags: 0

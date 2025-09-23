@@ -638,18 +638,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 597318396}
   m_CullTransparentMesh: 1
---- !u!114 &618654919 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1683630029428847796, guid: bc98d0e25d20c5748ad3539c166319da,
-    type: 3}
-  m_PrefabInstance: {fileID: 6550321756959245916}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a722281b74034f648a6c512b9392d317, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &654183524
 GameObject:
   m_ObjectHideFlags: 0
@@ -2386,11 +2374,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scene_Settings
       objectReference: {fileID: 0}
-    - target: {fileID: 6462156388722310668, guid: bc98d0e25d20c5748ad3539c166319da,
-        type: 3}
-      propertyPath: settingsCategoryTab
-      value: 
-      objectReference: {fileID: 618654919}
     - target: {fileID: 8143804084038386096, guid: bc98d0e25d20c5748ad3539c166319da,
         type: 3}
       propertyPath: m_Pivot.x

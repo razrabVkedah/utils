@@ -13,15 +13,15 @@ namespace Rusleo.Utils.Runtime.Hud
         private float _updatePeriod = 0.2f; // раз в 200мс обновляем тексты
         private string _cachedText = "";
 
-        public HudTheme Theme { get; private set; }
+        public HudSettings Settings { get; private set; }
 
         private HudService()
         {
         }
 
-        public void Configure(HudTheme theme, float updatePeriod)
+        public void Configure(HudSettings settings, float updatePeriod)
         {
-            Theme = theme;
+            Settings = settings;
             if (updatePeriod > 0f) _updatePeriod = updatePeriod;
         }
 
@@ -43,9 +43,9 @@ namespace Rusleo.Utils.Runtime.Hud
 
             _accum = 0f;
             _sb.Clear();
-            if (Theme && Theme.showHeader)
+            if (Settings && Settings.showHeader)
             {
-                _sb.Append(Theme.headerText);
+                _sb.Append(Settings.headerText);
                 _sb.Append('\n');
             }
 

@@ -16,7 +16,7 @@ namespace Rusleo.Utils.Runtime.Logging
         public FormatterKind formatter = FormatterKind.Default;
     }
 
-    [CreateAssetMenu(fileName = "RusleoLoggingSettings", menuName = "Rusleo/Logging Settings")]
+    [CreateAssetMenu(fileName = "RusleoLoggingSettings", menuName = "Rusleo/Utils/Logging Settings")]
     public sealed class LogConfig : ScriptableObject
     {
         [Header("General")] public LogLevel minimumLevel = LogLevel.Debug;

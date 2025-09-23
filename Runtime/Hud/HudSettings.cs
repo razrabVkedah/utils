@@ -2,8 +2,8 @@
 
 namespace Rusleo.Utils.Runtime.Hud
 {
-    [CreateAssetMenu(fileName = "HudTheme", menuName = "Rusleo/Utils/HUD Theme")]
-    public sealed class HudTheme : ScriptableObject
+    [CreateAssetMenu(fileName = "DefaultHudSettings", menuName = "Rusleo/Utils/HUD Settings")]
+    public sealed class HudSettings : ScriptableObject
     {
         public enum AnchorCorner
         {
@@ -38,6 +38,19 @@ namespace Rusleo.Utils.Runtime.Hud
         [Range(0, 100)] public int heightPercent = 15;
 
         [HideInInspector] public Texture2D white1X1;
+        
+        [Header("Metrics (Init only)")]
+        [SerializeField] private bool fpsMetrics = true;
+        [SerializeField] private bool frameMetrics = true;
+        [SerializeField] private bool memoryMetrics = true;
+        [SerializeField] private bool gcMetrics = true;
+        [SerializeField] private bool cpuMetrics = true;
+        
+        public bool FPSMetrics => fpsMetrics;
+        public bool FrameMetrics => frameMetrics;
+        public bool MemoryMetrics => memoryMetrics;
+        public bool GcMetrics => gcMetrics;
+        public bool CpuMetrics => cpuMetrics;
 
         public Texture2D GetSolidTex(Color c)
         {

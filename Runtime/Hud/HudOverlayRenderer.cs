@@ -8,7 +8,7 @@ namespace Rusleo.Utils.Runtime.Hud
         private GUIStyle _textStyle;
         private GUIStyle _boxStyle;
 
-        private void EnsureStyles(HudTheme t)
+        private void EnsureStyles(HudSettings t)
         {
             _textStyle ??= new GUIStyle(GUI.skin.label);
             _textStyle.font = t.font;
@@ -39,7 +39,7 @@ namespace Rusleo.Utils.Runtime.Hud
 
         private void OnGUI()
         {
-            var theme = HudService.Instance.Theme;
+            var theme = HudService.Instance.Settings;
             if (!theme || !theme.visible) return;
 
             EnsureStyles(theme);
@@ -56,18 +56,18 @@ namespace Rusleo.Utils.Runtime.Hud
             // Позиция по якорю
             var x = theme.anchor switch
             {
-                HudTheme.AnchorCorner.TopLeft => theme.margin.x,
-                HudTheme.AnchorCorner.TopRight => Screen.width - width - theme.margin.x,
-                HudTheme.AnchorCorner.BottomLeft => theme.margin.x,
-                HudTheme.AnchorCorner.BottomRight => Screen.width - width - theme.margin.x,
+                HudSettings.AnchorCorner.TopLeft => theme.margin.x,
+                HudSettings.AnchorCorner.TopRight => Screen.width - width - theme.margin.x,
+                HudSettings.AnchorCorner.BottomLeft => theme.margin.x,
+                HudSettings.AnchorCorner.BottomRight => Screen.width - width - theme.margin.x,
                 _ => theme.margin.x
             };
             var y = theme.anchor switch
             {
-                HudTheme.AnchorCorner.TopLeft => theme.margin.y,
-                HudTheme.AnchorCorner.TopRight => theme.margin.y,
-                HudTheme.AnchorCorner.BottomLeft => Screen.height - height - theme.margin.y,
-                HudTheme.AnchorCorner.BottomRight => Screen.height - height - theme.margin.y,
+                HudSettings.AnchorCorner.TopLeft => theme.margin.y,
+                HudSettings.AnchorCorner.TopRight => theme.margin.y,
+                HudSettings.AnchorCorner.BottomLeft => Screen.height - height - theme.margin.y,
+                HudSettings.AnchorCorner.BottomRight => Screen.height - height - theme.margin.y,
                 _ => theme.margin.y
             };
 

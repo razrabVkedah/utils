@@ -1,19 +1,24 @@
-﻿using Rusleo.Utils.Runtime.Hud.Metrics;
+﻿using System;
+using Rusleo.Utils.Runtime.Hud.Metrics;
 using Rusleo.Utils.Runtime.Logging;
 using UnityEngine;
+using UnityEngine.Serialization;
+using Logger = Rusleo.Utils.Runtime.Logging.Logger;
 
 namespace Rusleo.Utils.Runtime.Hud
 {
     public sealed class FpsHudBootstrap : MonoBehaviour
     {
-        [SerializeField] private HudTheme theme;
+        [SerializeField] private HudSettings settings;
         [SerializeField] private float updatePeriod = 0.2f;
+        private Logger _logger;
 
         private HudOverlayRenderer _renderer;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void AutoInit()
         {
+            
             Log.Debug("Rusleo.Utils.Runtime.HudBootstrap AutoInit");
 
             if (FindObjectOfType<FpsHudBootstrap>() != null) return;
@@ -26,28 +31,55 @@ namespace Rusleo.Utils.Runtime.Hud
 
         private void Awake()
         {
-            if (!theme)
+            _logger = new Logger("Rusleo HUD", gameObject);
+            if (!settings)
             {
-                theme = Resources.Load<HudTheme>("DefaultHudTheme");
-                Log.Debug(theme == null ? "Failed to load HudTheme." : "Loaded DefaultHudTheme.", null);
+                settings = Resources.Load<HudSettings>("DefaultHudSettings");
+                _logger.Debug(settings == null ? "Failed to load DefaultHudSettings." : "Loaded DefaultHudSettings.");
             }
 
-            if (!theme)
+            if (!settings)
             {
-                theme = ScriptableObject.CreateInstance<HudTheme>();
-                theme.name = "RuntimeHudTheme";
-                Log.Debug("Created RuntimeHudTheme.", null);
+                settings = ScriptableObject.CreateInstance<HudSettings>();
+                settings.name = "RuntimeHudSettings";
+                _logger.Debug("Created RuntimeHudSettings.");
             }
 
-            HudService.Instance.Configure(theme, updatePeriod);
+            HudService.Instance.Configure(settings, updatePeriod);
 
-            HudService.Instance.Register(new FpsMetric());
-            HudService.Instance.Register(new FrameTimeMetric());
-            HudService.Instance.Register(new MemoryMetric());
-            HudService.Instance.Register(new GcMetric());
-            HudService.Instance.Register(new CpuUsageMetric());
+            if (settings.FPSMetrics)
+            {
+                try
+                {
+                    HudService.Instance.Register(new FpsMetric());
+                }
+                catch (Exception e)
+                {
+                    _logger.Error("Failed to register FPS Metrics", e);
+                    throw;
+                }
+            }
+
+            if (settings.FPSMetrics) TryRegisterMetric<FpsMetric>();
+            if (settings.FrameMetrics) TryRegisterMetric<FrameTimeMetric>();
+            if (settings.MemoryMetrics) TryRegisterMetric<MemoryMetric>();
+            if (settings.GcMetrics) TryRegisterMetric<GcMetric>();
+            if (settings.CpuMetrics) TryRegisterMetric<CpuUsageMetric>();
 
             _renderer = gameObject.AddComponent<HudOverlayRenderer>();
+        }
+
+        private void TryRegisterMetric<T>(string metricName = null) where T : IMetricsProvider, new()
+        {
+            try
+            {
+                HudService.Instance.Register(new T());
+                _logger.Info($"Registered Metric: {metricName ?? typeof(T).Name}");
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Failed to register FPS Metrics", e);
+            }
         }
 
         private void Update()

@@ -121,7 +121,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2059730657471349812}
         m_TargetAssemblyTypeName: DevTimeController, Assembly-CSharp
         m_MethodName: SetTimeScale_125
         m_Mode: 1
@@ -522,7 +522,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2059730657471349812}
         m_TargetAssemblyTypeName: DevTimeController, Assembly-CSharp
         m_MethodName: SetTimeScale_075
         m_Mode: 1
@@ -1039,7 +1039,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2059730657471349812}
         m_TargetAssemblyTypeName: DevTimeController, Assembly-CSharp
         m_MethodName: SetTimeScale_050
         m_Mode: 1
@@ -1215,7 +1215,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2059730657471349812}
         m_TargetAssemblyTypeName: DevTimeController, Assembly-CSharp
         m_MethodName: SetTimeScale_100
         m_Mode: 1
@@ -1582,7 +1582,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2059730657471349812}
         m_TargetAssemblyTypeName: DevTimeController, Assembly-CSharp
         m_MethodName: SetTimeScale_025
         m_Mode: 1
@@ -1715,7 +1715,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2059730657471349812}
         m_TargetAssemblyTypeName: DevTimeController, Assembly-CSharp
         m_MethodName: SetTimeScale_0
         m_Mode: 1
@@ -1982,7 +1982,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2059730657471349812}
         m_TargetAssemblyTypeName: DevTimeController, Assembly-CSharp
         m_MethodName: SetTimeScale_200
         m_Mode: 1
@@ -2115,7 +2115,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2059730657471349812}
         m_TargetAssemblyTypeName: DevTimeController, Assembly-CSharp
         m_MethodName: SetTimeScale_150
         m_Mode: 1

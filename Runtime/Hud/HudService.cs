@@ -14,6 +14,12 @@ namespace Rusleo.Utils.Runtime.Hud
         private string _cachedText = "";
 
         public HudSettings Settings { get; private set; }
+        
+        public static void TrySetVisible(bool visible)
+        {
+            if (Instance == null || Instance.Settings == null) return;
+            Instance.Settings.visible = visible;
+        }
 
         private HudService()
         {

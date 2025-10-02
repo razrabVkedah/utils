@@ -61,8 +61,7 @@ namespace Rusleo.Utils.Runtime.AdvancedUI
 
             if (containToBounds && bounds != null)
             {
-                // Ваш общий метод зажатия в границы
-                Utils.ClampToBounds(_rt, bounds); // :contentReference[oaicite:2]{index=2}
+                Utils.ClampToBounds(_rt, bounds);
             }
         }
 

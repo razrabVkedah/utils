@@ -45,12 +45,16 @@ namespace Rusleo.Utils.Runtime.Hud
         [SerializeField] private bool memoryMetrics = true;
         [SerializeField] private bool gcMetrics = true;
         [SerializeField] private bool cpuMetrics = true;
+        [SerializeField] private bool hitchMetrics = true;
+        [SerializeField] private bool renderStatsMetrics = true;
         
         public bool FPSMetrics => fpsMetrics;
         public bool FrameMetrics => frameMetrics;
         public bool MemoryMetrics => memoryMetrics;
         public bool GcMetrics => gcMetrics;
         public bool CpuMetrics => cpuMetrics;
+        public bool HitchMetrics => hitchMetrics;
+        public bool RenderStatsMetrics => renderStatsMetrics;
 
         public Texture2D GetSolidTex(Color c)
         {

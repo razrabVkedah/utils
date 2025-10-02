@@ -32,7 +32,7 @@ namespace Rusleo.Utils.Runtime.Hud.Metrics
 
         public void Emit(IStringBuilderTarget sb)
         {
-            sb.Append("CPU: ");
+            sb.Append("FrameTime(CPU): ");
             sb.Append(_cpuMsEma.ToString("0.0"));
             sb.Append(" ms");
             if (_gpuMsEma > 0.001f)

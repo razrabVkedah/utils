@@ -52,7 +52,7 @@ namespace Rusleo.Utils.Runtime.Hud.Metrics
 
         public void Emit(IStringBuilderTarget sb)
         {
-            sb.Append("CPU: ");
+            sb.Append("CPU Usage: ");
             sb.Append(_ema.ToString("0.0"));
             sb.Append("%");
         }

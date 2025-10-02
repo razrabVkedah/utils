@@ -47,24 +47,13 @@ namespace Rusleo.Utils.Runtime.Hud
 
             HudService.Instance.Configure(settings, updatePeriod);
 
-            if (settings.FPSMetrics)
-            {
-                try
-                {
-                    HudService.Instance.Register(new FpsMetric());
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("Failed to register FPS Metrics", e);
-                    throw;
-                }
-            }
-
             if (settings.FPSMetrics) TryRegisterMetric<FpsMetric>();
             if (settings.FrameMetrics) TryRegisterMetric<FrameTimeMetric>();
             if (settings.MemoryMetrics) TryRegisterMetric<MemoryMetric>();
             if (settings.GcMetrics) TryRegisterMetric<GcMetric>();
             if (settings.CpuMetrics) TryRegisterMetric<CpuUsageMetric>();
+            if (settings.HitchMetrics) TryRegisterMetric<HitchMetric>();
+            if (settings.RenderStatsMetrics) TryRegisterMetric<RenderStatsMetric>();
 
             _renderer = gameObject.AddComponent<HudOverlayRenderer>();
         }

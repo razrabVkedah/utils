@@ -135,12 +135,6 @@ namespace Rusleo.Utils.Editor.GradientStudio
                                     RegeneratePreview(PreviewTexWidthSmall);
                                 }
 
-                                if (GUILayout.Button("В JSON", GUILayout.Width(70)))
-                                {
-                                    _json = ToJson(_gradient, true);
-                                    GUI.FocusControl(null);
-                                }
-
                                 if (GUILayout.Button("Переименовать", GUILayout.Width(100)))
                                 {
                                     var path = AssetDatabase.GetAssetPath(p);
@@ -152,6 +146,7 @@ namespace Rusleo.Utils.Editor.GradientStudio
                                         AssetDatabase.RenameAsset(path, Path.GetFileNameWithoutExtension(projRel));
                                         AssetDatabase.SaveAssets();
                                         RefreshPresetsList();
+                                        break;
                                     }
                                 }
 
@@ -161,6 +156,7 @@ namespace Rusleo.Utils.Editor.GradientStudio
                                     AssetDatabase.DeleteAsset(path);
                                     AssetDatabase.SaveAssets();
                                     RefreshPresetsList();
+                                    break;
                                 }
                             }
                         }
@@ -245,6 +241,12 @@ namespace Rusleo.Utils.Editor.GradientStudio
                         .Select(k => new GradientAlphaKey(Mathf.Clamp01(k.alpha), Mathf.Clamp01(k.time)))
                         .OrderBy(k => k.time).ToArray();
                     RegeneratePreview(PreviewTexWidthSmall);
+                }
+
+                if (GUILayout.Button("To JSON"))
+                {
+                    _json = ToJson(_gradient, true);
+                    GUI.FocusControl(null);
                 }
             }
         }

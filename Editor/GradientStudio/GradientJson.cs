@@ -4,20 +4,28 @@ using UnityEngine;
 
 namespace Rusleo.Utils.Editor.GradientStudio
 {
-[Serializable]
+    [Serializable]
     public class GradientJson
     {
         [Serializable]
         public class ColorKeyJson
         {
             [Serializable]
-            public class ColorRGBA { public float r, g, b, a = 1f; }
+            public class ColorRGBA
+            {
+                public float r, g, b, a = 1f;
+            }
+
             public ColorRGBA color = new ColorRGBA();
             public float time;
         }
 
         [Serializable]
-        public class AlphaKeyJson { public float alpha; public float time; }
+        public class AlphaKeyJson
+        {
+            public float alpha;
+            public float time;
+        }
 
         public int mode = 0; // 0 = Blend, 1 = Fixed (соответствует Unity.GradientMode)
         public ColorKeyJson[] colorKeys;
@@ -29,14 +37,16 @@ namespace Rusleo.Utils.Editor.GradientStudio
             var g = gradient ?? new Gradient();
             var mode = (int)g.mode;
 
-            var ck = g.colorKeys.Select(k => new ColorKeyJson {
+            var ck = g.colorKeys.Select(k => new ColorKeyJson
+            {
                 color = new ColorKeyJson.ColorRGBA { r = k.color.r, g = k.color.g, b = k.color.b, a = 1f },
                 time = Mathf.Clamp01(k.time)
             }).ToArray();
 
-            var ak = g.alphaKeys.Select(k => new AlphaKeyJson {
+            var ak = g.alphaKeys.Select(k => new AlphaKeyJson
+            {
                 alpha = Mathf.Clamp01(k.alpha),
-                time  = Mathf.Clamp01(k.time)
+                time = Mathf.Clamp01(k.time)
             }).ToArray();
 
             return new GradientJson { mode = mode, colorKeys = ck, alphaKeys = ak };
@@ -62,7 +72,8 @@ namespace Rusleo.Utils.Editor.GradientStudio
             ).ToArray();
 
             // Edge cases: Unity требует >=1 ключа
-            if (ck.Length == 0) ck = new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) };
+            if (ck.Length == 0)
+                ck = new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) };
             if (ak.Length == 0) ak = new[] { new GradientAlphaKey(1f, 0f), new GradientAlphaKey(1f, 1f) };
 
             g.SetKeys(ck, ak);

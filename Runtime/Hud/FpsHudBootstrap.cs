@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Rusleo.Utils.Runtime.Hud.Metrics;
 using Rusleo.Utils.Runtime.Logging;
 using UnityEngine;
@@ -34,7 +35,7 @@ namespace Rusleo.Utils.Runtime.Hud
             _logger = new Logger("Rusleo HUD", gameObject);
             if (!settings)
             {
-                settings = Resources.Load<HudSettings>("DefaultHudSettings");
+                settings = Resources.LoadAll<HudSettings>("").FirstOrDefault(r => r.name == "DefaultHudSettings");
                 _logger.Debug(settings == null ? "Failed to load DefaultHudSettings." : "Loaded DefaultHudSettings.");
             }
 

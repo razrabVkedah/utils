@@ -8,8 +8,8 @@ namespace Rusleo.Utils.Editor.Windows.Logging
 {
     internal sealed class LoggingSettingsProvider : SettingsProvider
     {
-        private const string RESOURCES_DIR = "Assets/Resources";
-        private const string ASSET_PATH = "Assets/Resources/RusleoLoggingSettings.asset";
+        private const string RESOURCES_DIR = "Assets/Resources/LoggingSettings";
+        private const string ASSET_PATH = "Assets/Resources/LoggingSettings/RusleoLoggingSettings.asset";
         private LogConfig _config;
         private SerializedObject _so;
 

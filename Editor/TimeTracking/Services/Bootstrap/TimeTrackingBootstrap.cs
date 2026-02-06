@@ -1,13 +1,15 @@
 using Rusleo.Utils.Editor.TimeTracking.Core;
 using Rusleo.Utils.Editor.TimeTracking.Interfaces;
 using Rusleo.Utils.Editor.TimeTracking.Services.Ids;
-using Rusleo.Utils.Editor.TimeTracking.Services.IO.Rusleo.Utils.Editor.TimeTracking;
+using Rusleo.Utils.Editor.TimeTracking.Services.IO;
 using Rusleo.Utils.Editor.TimeTracking.Services.Json;
 using Rusleo.Utils.Editor.TimeTracking.Services.Policy;
 using Rusleo.Utils.Editor.TimeTracking.Services.Probes;
+using Rusleo.Utils.Editor.TimeTracking.Services.Settings;
 using Rusleo.Utils.Editor.TimeTracking.Services.Systems;
 using Rusleo.Utils.Editor.TimeTracking.Services.TimeTracker;
 using UnityEditor;
+using UnityEngine;
 
 namespace Rusleo.Utils.Editor.TimeTracking.Services.Bootstrap
 {
@@ -18,20 +20,49 @@ namespace Rusleo.Utils.Editor.TimeTracking.Services.Bootstrap
 
         static TimeTrackingBootstrap()
         {
+            if (!TimeTrackingSettings.Enabled)
+                return; 
+            
+#if UNITY_2020_2_OR_NEWER
+            if (AssetDatabase.IsAssetImportWorkerProcess())
+                return;
+#endif
+            if (UnityEditorInternal.InternalEditorUtility.inBatchMode)
+                return;
+
+            var clock = new ClockUtcSeconds();
+            var sessionIdProvider = new EditorLaunchSessionIdProvider();
+            _ = sessionIdProvider.GetOrCreate(out var isFirstStart);
+            var editorLaunchStartUtc = sessionIdProvider.GetOrCreateSessionStartUtc(clock);
+
             Tracker = new EditorTimeTracker(
-                clock: new ClockUtcSeconds(),
+                clock: clock,
                 paths: new LogPathProvider(),
                 deviceIdProvider: new EditorPrefsDeviceIdProvider(),
-                sessionIdProvider: new GuidSessionIdProvider(),
-                projectIdProvider: new ProjectIdProvider(),
+                sessionIdProvider: sessionIdProvider,
+                projectIdProvider: new FileProjectIdProvider(),
                 unityContextProvider: new UnityContextProvider(),
                 serializer: new WireEventSerializer(),
-                heartbeatPolicy: new FixedHeartbeatPolicy(60),
+                heartbeatPolicy: new FixedHeartbeatPolicy(TimeTrackingSettings.HeartbeatSeconds),
                 editorState: new EditorStateProbe(),
-                inputProbe: new InputActivityProbe(120.0),
-                trackerVersion: new TrackerVersion("0.1.0"));
+                inputProbe: new InputActivityProbeV2(TimeTrackingSettings.AfkSeconds),
+                trackerVersion: new TrackerVersion(TimeTrackingSettings.TrackerVersion));
 
-            Tracker.Start();
+            Tracker.Start(isFirstStart, editorLaunchStartUtc);
+            Debug.Log("Create editor time tracker for session");
+
+            AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
+            EditorApplication.quitting += OnEditorQuitting;
+        }
+
+        private static void OnBeforeAssemblyReload()
+        {
+            Tracker?.OnDomainReload();
+        }
+
+        private static void OnEditorQuitting()
+        {
+            Tracker?.Stop(SessionEndReason.Quit);
         }
     }
 }

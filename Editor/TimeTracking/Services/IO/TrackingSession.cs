@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Rusleo.Utils.Editor.TimeTracking.Core;
 using Rusleo.Utils.Editor.TimeTracking.Interfaces;
+using UnityEngine;
 
 namespace Rusleo.Utils.Editor.TimeTracking.Services.IO
 {
@@ -9,6 +10,7 @@ namespace Rusleo.Utils.Editor.TimeTracking.Services.IO
     {
         private readonly IJsonlWriter _writer;
         private readonly IEventSerializer _serializer;
+        private bool _disposed;
 
         public TrackingSession(
             FileInfo file,
@@ -47,6 +49,8 @@ namespace Rusleo.Utils.Editor.TimeTracking.Services.IO
 
         public void Dispose()
         {
+            if (_disposed) return;
+            _disposed = true;
             _writer.Dispose();
         }
     }

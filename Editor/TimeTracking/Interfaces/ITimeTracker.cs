@@ -5,7 +5,8 @@ namespace Rusleo.Utils.Editor.TimeTracking.Interfaces
     public interface ITimeTracker
     {
         bool IsRunning { get; }
-        void Start();
+        void Start(bool isFirstStartInThisEditorLaunch, UnixTime startTime);
         void Stop(SessionEndReason reason);
+        void OnDomainReload();
     }
 }

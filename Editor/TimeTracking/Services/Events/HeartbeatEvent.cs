@@ -1,7 +1,7 @@
 using Rusleo.Utils.Editor.TimeTracking.Core;
 using Rusleo.Utils.Editor.TimeTracking.Interfaces;
 
-namespace Rusleo.Utils.Editor.TimeTracking.Services
+namespace Rusleo.Utils.Editor.TimeTracking.Services.Events
 {
     public sealed class HeartbeatEvent : ITrackerEvent
     {

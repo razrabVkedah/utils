@@ -5,31 +5,28 @@ using UnityEngine;
 
 namespace Rusleo.Utils.Editor.TimeTracking.Services.IO
 {
-    namespace Rusleo.Utils.Editor.TimeTracking
+    public sealed class LogPathProvider : ILogPathProvider
     {
-        public sealed class LogPathProvider : ILogPathProvider
+        private const string RootDir = "ProjectSettings/RusleoTimeTracking/sessions";
+
+        public DirectoryInfo GetSessionsDirectory()
         {
-            private const string RootDir = "ProjectSettings/RusleoTimeTracking/sessions";
+            var path = Path.Combine(Application.dataPath, "..", RootDir);
+            var full = Path.GetFullPath(path);
 
-            public DirectoryInfo GetSessionsDirectory()
-            {
-                var path = Path.Combine(Application.dataPath, "..", RootDir);
-                var full = Path.GetFullPath(path);
+            if (!Directory.Exists(full))
+                Directory.CreateDirectory(full);
 
-                if (!Directory.Exists(full))
-                    Directory.CreateDirectory(full);
+            return new DirectoryInfo(full);
+        }
 
-                return new DirectoryInfo(full);
-            }
+        public FileInfo GetSessionFile(UnixTime sessionStartUtc, DeviceId deviceId, SessionId sessionId)
+        {
+            var dir = GetSessionsDirectory();
+            var fileName = $"{sessionStartUtc.Value}__{deviceId.Value}__{sessionId.Value}.jsonl";
+            var fullPath = Path.Combine(dir.FullName, fileName);
 
-            public FileInfo GetSessionFile(UnixTime sessionStartUtc, DeviceId deviceId, SessionId sessionId)
-            {
-                var dir = GetSessionsDirectory();
-                var fileName = $"{sessionStartUtc.Value}__{deviceId.Value}__{sessionId.Value}.jsonl";
-                var fullPath = Path.Combine(dir.FullName, fileName);
-
-                return new FileInfo(fullPath);
-            }
+            return new FileInfo(fullPath);
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using Rusleo.Utils.Editor.TimeTracking.Core;
 using Rusleo.Utils.Editor.TimeTracking.Interfaces;
+using Rusleo.Utils.Editor.TimeTracking.Services.Events;
 using Rusleo.Utils.Editor.TimeTracking.Services.IO;
 using UnityEditor;
 
@@ -55,36 +56,34 @@ namespace Rusleo.Utils.Editor.TimeTracking.Services.TimeTracker
 
         public bool IsRunning => _session != null;
 
-        public void Start()
+        public void Start(bool isFirstStartInThisEditorLaunch, UnixTime editorLaunchStartUtc)
         {
-            if (_session != null)
-                return;
+            if (_session != null) return;
 
             var now = _clock.UtcNow();
             var deviceId = _deviceIdProvider.GetOrCreate();
-            var sessionId = _sessionIdProvider.Create();
+            var sessionId = _sessionIdProvider.GetOrCreate();
 
-            var file = _paths.GetSessionFile(now, deviceId, sessionId);
-            var writer = new JsonlFileWriter(file);
+            // ВАЖНО: имя файла фиксировано на запуск Unity
+            var file = _paths.GetSessionFile(editorLaunchStartUtc, deviceId, sessionId);
 
-            _session = new TrackingSession(
-                file: file,
-                writer: writer,
-                serializer: _serializer,
-                deviceId: deviceId,
-                sessionId: sessionId,
-                sessionStartUtc: now);
+            //var writer = new JsonlFileWriter(file);
+            var writer = new AsyncJsonlFileWriter(file);
+            _session = new TrackingSession(file, writer, _serializer, deviceId, sessionId, editorLaunchStartUtc);
 
-            var start = new SessionStartEvent(
-                timestampUtc: now,
-                unityVersion: _unityContextProvider.GetUnityVersion(),
-                projectId: _projectIdProvider.GetProjectId(),
-                deviceId: deviceId,
-                sessionId: sessionId,
-                trackerVersion: _trackerVersion);
+            if (isFirstStartInThisEditorLaunch)
+            {
+                var start = new SessionStartEvent(
+                    timestampUtc: now,
+                    unityVersion: _unityContextProvider.GetUnityVersion(),
+                    projectId: _projectIdProvider.GetProjectId(),
+                    deviceId: deviceId,
+                    sessionId: sessionId,
+                    trackerVersion: _trackerVersion);
 
-            _session.Append(start);
-            _session.Flush();
+                _session.Append(start);
+                _session.Flush();
+            }
 
             _lastHeartbeatUtc = now;
             _nextHeartbeatAt = EditorApplication.timeSinceStartup + _heartbeatPolicy.IntervalSeconds;
@@ -129,6 +128,22 @@ namespace Rusleo.Utils.Editor.TimeTracking.Services.TimeTracker
             }
         }
 
+        public void OnDomainReload()
+        {
+            if (_session == null)
+                return;
+
+            try
+            {
+                // best-effort: сохранить последние события, ничего не "закрываем"
+                _session.Flush();
+            }
+            catch
+            {
+                // best-effort
+            }
+        }
+
         private void Subscribe()
         {
             if (_subscribed)
@@ -153,7 +168,9 @@ namespace Rusleo.Utils.Editor.TimeTracking.Services.TimeTracker
 
         private void OnBeforeReload()
         {
-            Stop(SessionEndReason.Reload);
+            OnDomainReload();
+            Unsubscribe();
+            // НЕ Stop()
         }
 
         private void OnQuitting()

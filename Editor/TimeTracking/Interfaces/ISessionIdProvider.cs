@@ -4,6 +4,7 @@ namespace Rusleo.Utils.Editor.TimeTracking.Interfaces
 {
     public interface ISessionIdProvider
     {
-        SessionId Create();
+        SessionId GetOrCreate();
+        UnixTime GetOrCreateSessionStartUtc(IClock clock);
     }
-}
+} 

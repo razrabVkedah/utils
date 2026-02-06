@@ -7,7 +7,7 @@ namespace Rusleo.Utils.Editor.TimeTracking.Services.Ids
 {
     public sealed class EditorPrefsDeviceIdProvider : IDeviceIdProvider
     {
-        private const string Key = "Rusleo.Utils.Editor.TimeTracking.DeviceId";
+        private const string Key = "Rusleo.TimeTracking.DeviceId";
 
         public DeviceId GetOrCreate()
         {

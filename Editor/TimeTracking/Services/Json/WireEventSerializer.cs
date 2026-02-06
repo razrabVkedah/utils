@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using Rusleo.Utils.Editor.TimeTracking.Core;
 using Rusleo.Utils.Editor.TimeTracking.Interfaces;
+using Rusleo.Utils.Editor.TimeTracking.Services.Events;
 
 namespace Rusleo.Utils.Editor.TimeTracking.Services.Json
 {
@@ -15,32 +16,32 @@ namespace Rusleo.Utils.Editor.TimeTracking.Services.Json
 
             sb.Append('{');
 
-            WriteProp(sb, "k", KindToWire(ev.Kind), true);
-            WriteProp(sb, "ts", ev.TimestampUtc.Value, false);
-            WriteProp(sb, "d", ev.DeviceId.Value, false);
-            WriteProp(sb, "s", ev.SessionId.Value, false);
+            WriteProp(sb, Wire.Keys.Kind, KindToWire(ev.Kind), true);
+            WriteProp(sb, Wire.Keys.Timestamp, ev.TimestampUtc.Value, false);
+            WriteProp(sb, Wire.Keys.DeviceId, ev.DeviceId.Value, false);
+            WriteProp(sb, Wire.Keys.SessionId, ev.SessionId.Value, false);
 
             if (ev is SessionStartEvent start)
             {
-                WriteProp(sb, "uv", start.UnityVersion, false);
-                WriteProp(sb, "pid", start.ProjectId.Value, false);
-                WriteProp(sb, "tv", start.TrackerVersion.Value, false);
+                WriteProp(sb, Wire.Keys.UnityVersion, start.UnityVersion, false);
+                WriteProp(sb, Wire.Keys.ProjectId, start.ProjectId.Value, false);
+                WriteProp(sb, Wire.Keys.TrackerVersion, start.TrackerVersion.Value, false);
             }
             else if (ev is HeartbeatEvent hb)
             {
-                WriteProp(sb, "dt", hb.DeltaSeconds, false);
-                WriteProp(sb, "pm", hb.Flags.IsPlayMode ? 1 : 0, false);
-                WriteProp(sb, "afk", hb.Flags.IsAfk ? 1 : 0, false);
+                WriteProp(sb, Wire.Keys.DeltaSeconds, hb.DeltaSeconds, false);
+                WriteProp(sb, Wire.Keys.PlayMode, hb.Flags.IsPlayMode ? 1 : 0, false);
+                WriteProp(sb, Wire.Keys.Afk, hb.Flags.IsAfk ? 1 : 0, false);
 
                 if (hb.Flags.IsFocused.HasValue)
-                    WriteProp(sb, "fc", hb.Flags.IsFocused.Value ? 1 : 0, false);
+                    WriteProp(sb, Wire.Keys.Focused, hb.Flags.IsFocused.Value ? 1 : 0, false);
 
                 if (hb.Flags.IsCompiling.HasValue)
-                    WriteProp(sb, "cp", hb.Flags.IsCompiling.Value ? 1 : 0, false);
+                    WriteProp(sb, Wire.Keys.Compiling, hb.Flags.IsCompiling.Value ? 1 : 0, false);
             }
             else if (ev is SessionEndEvent end)
             {
-                WriteProp(sb, "r", EndReasonToWire(end.Reason), false);
+                WriteProp(sb, Wire.Keys.EndReason, EndReasonToWire(end.Reason), false);
             }
 
             sb.Append('}');
@@ -52,10 +53,10 @@ namespace Rusleo.Utils.Editor.TimeTracking.Services.Json
         {
             return kind switch
             {
-                TrackerEventKind.SessionStart => "session_start",
-                TrackerEventKind.Heartbeat => "heartbeat",
-                TrackerEventKind.SessionEnd => "session_end",
-                _ => "unknown"
+                TrackerEventKind.SessionStart => Wire.Kinds.SessionStart,
+                TrackerEventKind.Heartbeat => Wire.Kinds.Heartbeat,
+                TrackerEventKind.SessionEnd => Wire.Kinds.SessionEnd,
+                _ => Wire.Kinds.Unknown,
             };
         }
 
@@ -63,10 +64,10 @@ namespace Rusleo.Utils.Editor.TimeTracking.Services.Json
         {
             return reason switch
             {
-                SessionEndReason.Quit => "quit",
-                SessionEndReason.Reload => "reload",
-                SessionEndReason.Unknown => "unknown",
-                _ => "unknown"
+                SessionEndReason.Quit => Wire.EndReasons.Quit,
+                SessionEndReason.Reload => Wire.EndReasons.Reload,
+                SessionEndReason.Unknown => Wire.EndReasons.Unknown,
+                _ => Wire.EndReasons.Unknown
             };
         }
 

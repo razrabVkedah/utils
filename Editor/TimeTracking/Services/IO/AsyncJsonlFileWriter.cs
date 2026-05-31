@@ -66,14 +66,6 @@ namespace Rusleo.Utils.Editor.TimeTracking.Services.IO
             if (Volatile.Read(ref _disposed) == 1) return;
 
             _signal.Set();
-
-            if (Volatile.Read(ref _pendingCount) == 0)
-            {
-                try { _writer.Flush(); } catch { /* best-effort */ }
-                _flushedEvent.Set();
-                return;
-            }
-
             _flushedEvent.Wait();
         }
 
@@ -141,17 +133,11 @@ namespace Rusleo.Utils.Editor.TimeTracking.Services.IO
 
         private void DrainQueue()
         {
-            var wroteAny = false;
-
             while (_queue.TryDequeue(out var line))
             {
                 _writer.WriteLine(line);
-                wroteAny = true;
                 Interlocked.Decrement(ref _pendingCount);
             }
-
-            if (wroteAny && Volatile.Read(ref _pendingCount) == 0)
-                _flushedEvent.Set();
         }
     }
 }

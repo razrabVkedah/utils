@@ -27,8 +27,8 @@ namespace Rusleo.Utils.Editor.TimeTracking.Services.Probes
 
         private static void OnUpdate()
         {
-            // Можно расширить: отслеживать смену фокуса окна/активацию Unity Editor.
-            // Пока оставляем как есть.
+            if (UnityEditorInternal.InternalEditorUtility.isApplicationActive)
+                MarkActivity();
         }
 
         private static void OnSceneGui(SceneView view)

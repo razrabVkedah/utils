@@ -49,20 +49,9 @@ namespace Rusleo.Utils.Editor.TimeTracking.Services.Bootstrap
                 trackerVersion: new TrackerVersion(TimeTrackingSettings.TrackerVersion));
 
             Tracker.Start(isFirstStart, editorLaunchStartUtc);
-            Debug.Log("Create editor time tracker for session");
 
-            AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
-            EditorApplication.quitting += OnEditorQuitting;
-        }
-
-        private static void OnBeforeAssemblyReload()
-        {
-            Tracker?.OnDomainReload();
-        }
-
-        private static void OnEditorQuitting()
-        {
-            Tracker?.Stop(SessionEndReason.Quit);
+            if (isFirstStart)
+                Debug.Log("[TimeTracking] Session started");
         }
     }
 }

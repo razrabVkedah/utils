@@ -14,6 +14,8 @@ namespace Rusleo.Utils.Runtime.Attributes.Validation
     [InitializeOnLoad]
     public static class RequiredPlayModeValidator
     {
+        private static readonly Dictionary<Type, CachedFieldData[]> _fieldCache = new();
+
         static RequiredPlayModeValidator()
         {
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
@@ -90,28 +92,17 @@ namespace Rusleo.Utils.Runtime.Attributes.Validation
                 return;
             }
 
-            foreach (var field in GetAllFields(value.GetType()))
+            foreach (var cached in GetCachedFields(value.GetType()))
             {
-                if (field.IsStatic || field.IsNotSerialized)
-                {
-                    continue;
-                }
+                var fieldValue = cached.Field.GetValue(value);
+                var fieldPath = $"{path}.{cached.Field.Name}";
 
-                if (!ShouldInspectField(field))
-                {
-                    continue;
-                }
-
-                var fieldValue = field.GetValue(value);
-                var fieldPath = $"{path}.{field.Name}";
-                var requiredAttribute = field.GetCustomAttribute<RequiredAttribute>();
-
-                if (requiredAttribute != null && IsMissing(field, fieldValue))
+                if (cached.Required != null && IsMissing(cached, fieldValue))
                 {
                     var message = $"[Required] {fieldPath} is null.";
-                    if (!string.IsNullOrWhiteSpace(requiredAttribute.Message))
+                    if (!string.IsNullOrWhiteSpace(cached.Required.Message))
                     {
-                        message += $" {requiredAttribute.Message}";
+                        message += $" {cached.Required.Message}";
                     }
 
                     errors.Add(new ValidationError(message, context));
@@ -128,7 +119,7 @@ namespace Rusleo.Utils.Runtime.Attributes.Validation
                     continue;
                 }
 
-                if (ShouldRecurseInto(field.FieldType))
+                if (cached.ShouldRecurse)
                 {
                     ValidateNestedValue(fieldValue, context, fieldPath, errors, visited);
                 }
@@ -166,39 +157,63 @@ namespace Rusleo.Utils.Runtime.Attributes.Validation
             ValidateObject(value, context, path, errors, visited);
         }
 
-        private static bool IsMissing(FieldInfo field, object value)
+        private static CachedFieldData[] GetCachedFields(Type type)
         {
-            if (typeof(Object).IsAssignableFrom(field.FieldType))
+            if (_fieldCache.TryGetValue(type, out var cached))
+            {
+                return cached;
+            }
+
+            const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            var result = new List<CachedFieldData>();
+            var current = type;
+
+            while (current != null && current != typeof(object))
+            {
+                foreach (var field in current.GetFields(flags))
+                {
+                    if (field.IsStatic || field.IsNotSerialized)
+                    {
+                        continue;
+                    }
+
+                    var required = field.GetCustomAttribute<RequiredAttribute>();
+                    var hasSerializeField = field.GetCustomAttribute<SerializeField>() != null;
+                    var hasSerializeReference = field.GetCustomAttribute<SerializeReference>() != null;
+
+                    if (required == null && !hasSerializeField && !hasSerializeReference && !field.IsPublic)
+                    {
+                        continue;
+                    }
+
+                    result.Add(new CachedFieldData(
+                        field,
+                        required,
+                        hasSerializeReference,
+                        ShouldRecurseInto(field.FieldType)));
+                }
+
+                current = current.BaseType;
+            }
+
+            cached = result.ToArray();
+            _fieldCache[type] = cached;
+            return cached;
+        }
+
+        private static bool IsMissing(CachedFieldData cached, object value)
+        {
+            if (typeof(Object).IsAssignableFrom(cached.Field.FieldType))
             {
                 return value as Object == null;
             }
 
-            if (field.GetCustomAttribute<SerializeReference>() != null)
+            if (cached.IsSerializeReference)
             {
                 return value == null;
             }
 
             return false;
-        }
-
-        private static bool ShouldInspectField(FieldInfo field)
-        {
-            if (field.GetCustomAttribute<RequiredAttribute>() != null)
-            {
-                return true;
-            }
-
-            if (field.GetCustomAttribute<SerializeField>() != null)
-            {
-                return true;
-            }
-
-            if (field.GetCustomAttribute<SerializeReference>() != null)
-            {
-                return true;
-            }
-
-            return field.IsPublic;
         }
 
         private static bool ShouldRecurseInto(Type type)
@@ -221,25 +236,25 @@ namespace Rusleo.Utils.Runtime.Attributes.Validation
             return true;
         }
 
-        private static IEnumerable<FieldInfo> GetAllFields(Type type)
-        {
-            const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-
-            while (type != null && type != typeof(object))
-            {
-                var fields = type.GetFields(flags);
-                foreach (var field in fields)
-                {
-                    yield return field;
-                }
-
-                type = type.BaseType;
-            }
-        }
-
         private static bool ShouldTrackReference(object value)
         {
             return !value.GetType().IsValueType && value is not string;
+        }
+
+        private readonly struct CachedFieldData
+        {
+            public readonly FieldInfo Field;
+            public readonly RequiredAttribute Required;
+            public readonly bool IsSerializeReference;
+            public readonly bool ShouldRecurse;
+
+            public CachedFieldData(FieldInfo field, RequiredAttribute required, bool isSerializeReference, bool shouldRecurse)
+            {
+                Field = field;
+                Required = required;
+                IsSerializeReference = isSerializeReference;
+                ShouldRecurse = shouldRecurse;
+            }
         }
 
         private readonly struct ValidationError

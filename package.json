@@ -1,9 +1,9 @@
 {
   "name": "com.rusleo.utils",
   "displayName": "Rusleo.Utils",
-  "version": "1.7.5",
+  "version": "1.7.6",
   "unity": "2022.3",
-  "description": "Utility and logging tools created by Rusleo to improve productivity and reusability across Unity projects.",
+  "description": "A collection of runtime and editor utilities for Unity 2022.3+. Includes a flexible logging system with live Editor viewer, HUD overlay (FPS/Memory/CPU, no Canvas required), spline math with arc-length parameterization, advanced UI components (long-press, double-click, drag), inspector attributes ([InspectorButton], [Required], [EnableIf]), hotkeys manager with rebind UI, gradient editor, and built-in icon browser.",
   "author": {
     "name": "Rusleo",
     "url": "https://github.com/razrabVkedah"
@@ -11,6 +11,11 @@
   "keywords": [
     "utils",
     "tools",
+    "logging",
+    "hud",
+    "splines",
+    "hotkeys",
+    "inspector",
     "rusleo"
   ],
   "dependencies": {

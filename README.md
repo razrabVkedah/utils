@@ -1,112 +1,167 @@
 # Rusleo Utils
 
-Набор утилит и инструментов для Unity, собранных в единый пакет.
-Содержит как **runtime-модули** для игр, так и **editor-утилиты** для ускорения разработки.
+Набор runtime и editor утилит для Unity 2022.3+.
 
-## 🚀 Установка
+## Установка
 
-Добавьте в `manifest.json` вашего проекта:
-
-```json
-{
-  "dependencies": {
-    "com.rusleo.utils": "https://github.com/razrabVkedah/Rusleo.Utils.git#1.0.0"
-  }
-}
-```
-
-или через Unity Package Manager → *Add package from git URL...*:
+Через Unity Package Manager → *Add package from git URL...*:
 
 ```
 https://github.com/razrabVkedah/Rusleo.Utils.git
 ```
 
----
+Или вручную в `manifest.json`:
 
-## 📦 Возможности
-
-### 🔹 Runtime
-
-* **Logging System** — удобный логгер вместо `Debug.Log` с форматтерами и категориями.
-* **Hotkeys Runtime Fallback** — единый слой для регистрации хоткеев, работает и без Editor.
-* **HUD System** — готовое оверлей-HUD с метриками:
-
-  * FPS и время кадра
-  * Использование памяти
-  * GC и CPU
-  * Автоадаптация размеров текста
-  * Настройка ширины/высоты в процентах от экрана
-* **StringBuilderTarget** — безопасный и быстрый таргет для работы со строками без лишних аллокаций.
-
-### 🔹 Editor
-
-* **Hotkeys System** — единый набор горячих клавиш (с fallback в меню Unity).
-* **Shortcut Viewer** — окно для просмотра и поиска всех хоткеев.
-* **Gradient Window** — редактор градиентов с JSON-импортом/экспортом.
-* **Editor Icon Browser** — просмотр встроенных иконок Unity (с поиском).
-
----
-
-## 🔑 Примеры
-
-### Горячие клавиши
-
-```csharp
-using Rusleo.Utils.Editor.Hotkeys.Core;
-using UnityEditor;
-
-internal static class MyHotkeys
+```json
 {
-    [MenuItem("Rusleo/Hotkeys/Do Something %#d")]
-    private static void DoSomething()
-    {
-        // Ваш код
-    }
+  "dependencies": {
+    "com.rusleo.utils": "https://github.com/razrabVkedah/Rusleo.Utils.git"
+  }
 }
 ```
 
-Хоткей появится в меню и будет работать сразу.
-В окне **Shortcut Viewer** можно увидеть все доступные комбинации.
+---
+
+## Runtime
+
+### Logging System
+
+Замена `Debug.Log` с поддержкой форматтеров, фильтров, sink-ов и контекста. Инициализируется автоматически.
+
+```csharp
+var log = new Logger("MySystem");
+log.Info("Игрок подключился");
+log.WithMeta("userId", id).Warn("Нет сохранения");
+```
+
+Встроенные sink-и: консоль Unity, файл с ротацией (JSON или текст).
+Живой просмотр логов — через **Tools → Rusleo → Log Viewer**.
 
 ---
 
 ### HUD Overlay
 
+Оверлей с метриками поверх игры. Не требует Canvas.
+
 ```csharp
-// Автоматически создаётся при старте сцены
-// Настройка через HudTheme (шрифт, цвет, масштаб)
 HudService.Instance.Register(new FpsMetric());
 HudService.Instance.Register(new MemoryMetric());
+HudService.Instance.Register(new CpuUsageMetric());
 ```
 
-HUD подстраивается под экран, поддерживает проценты ширины/высоты и авто-resize текста.
+Доступные метрики: FPS, время кадра, память, GC, CPU, render stats.
+Размер и позиция — в процентах от экрана, текст масштабируется автоматически.
 
 ---
 
-## 🗂 Структура пакета
+### Math — Splines & Interpolations
+
+Сплайны с arc-length параметризацией (равномерный проход по длине):
+
+```csharp
+var spline = new Spline3D(SplineType.CatmullRom, points);
+Vector3 pos = spline.Evaluate(0.5f); // t = 0..1 по длине дуги
+```
+
+Типы: `CatmullRom`, `CatmullRomCentripetal`, `Hermite`, `Lerp`.
+Интерполяции: `Linear`, `CubicHermite`, `Smoothstep`, `Smootherstep`, `Cosine`.
+
+---
+
+### Advanced UI Components
+
+**`AdvancedButton`** — кнопка с расширенными жестами:
+- Long Press, Double Click, Hold & Repeat
+- Drag с событиями Begin/Delta/End
+- Условная активность и видимость (`EnableIf`, `VisibleIf`)
+
+**`SimpleEventButton`** — лёгкий вариант для базовых сценариев (Click, PointerEnter/Exit, Drag).
+
+**`DraggableRectTransform`** — перетаскивание UI-элемента с ограничением границ.
+
+---
+
+### Inspector Attributes
+
+```csharp
+[InspectorButton("Сгенерировать")]
+private void Generate() { ... }
+
+[Required]
+[SerializeField] private Transform _target;
+
+[InspectorButton("Опасно!", confirmMessage: "Уверен?")]
+[EnableIf(nameof(_isReady))]
+private void DangerousAction() { ... }
+```
+
+`[InspectorButton]` поддерживает: иконки, размер кнопки, диалог подтверждения, Undo/Redo, `async`/`IEnumerator` методы.
+`[Required]` подсвечивает поле красным и показывает предупреждение если не назначено.
+
+---
+
+## Editor
+
+### Hotkeys System
+
+Единая система горячих клавиш с окном управления.
+
+Встроенные хоткеи (все перепривязываемые):
+- Создать материал / папку
+- Открыть Explorer / Console
+- Выделение сцен и объектов
+
+Все хоткеи доступны через **Tools → Rusleo → Shortcut Viewer** даже без привязки к клавишам.
+
+---
+
+### Gradient Studio
+
+Редактор градиентов с сохранением пресетов и JSON-импортом/экспортом.
+**Tools → Rusleo → Gradient Studio**
+
+---
+
+### Editor Icon Browser
+
+Поиск и просмотр всех встроенных иконок Unity (5000+). Копирование имени или готового сниппета для кода.
+**Tools → Rusleo → Icon Browser**
+
+---
+
+### Log Viewer
+
+Живая лента логов с фильтрацией по уровню, тегам и тексту. Лимит — 2000 записей.
+**Tools → Rusleo → Log Viewer**
+
+---
+
+## Структура пакета
 
 ```
 Rusleo.Utils
  ┣ Runtime
- ┃ ┣ Hud
- ┃ ┣ Logging
- ┃ ┣ Core
- ┃ ┗ StringBuilder
+ ┃ ┣ Logging        # Log, Logger, сinks, форматтеры, фильтры
+ ┃ ┣ Hud            # HudService, метрики, рендерер
+ ┃ ┣ Math           # Spline1/2/3D, интерполяции
+ ┃ ┣ AdvancedUI     # AdvancedButton, SimpleEventButton, Draggable
+ ┃ ┣ Attributes     # InspectorButton, Required, EnableIf, VisibleIf
+ ┃ ┗ Extensions     # MonoBehaviour extensions
  ┣ Editor
- ┃ ┣ Hotkeys
- ┃ ┣ Windows
- ┃ ┣ Gradient
- ┃ ┗ IconBrowser
- ┗ Tests
+ ┃ ┣ Hotkeys        # ShortcutManager интеграция, окно управления
+ ┃ ┣ InspectorButtons # GlobalButtonEditor (drawer для [InspectorButton])
+ ┃ ┣ GradientStudio # Редактор градиентов
+ ┃ ┗ Windows        # IconBrowser, LogViewer, HierarchyTooltip
+ ┗ Samples~
+   ┗ InGame         # Демо: HUD, Logging, UI, FPS Limiter
 ```
 
 ---
 
-## 📌 Планы
+## Требования
 
-* Расширение HUD (свои метрики, кастомные панели).
-* Единый Settings-Asset для глобальной конфигурации.
-* Дополнительные Editor-инструменты (JSON tools, инспекторы).
+- Unity 2022.3+
+- `com.unity.mathematics` 1.2.6+
 
 ---
 

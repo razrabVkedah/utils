@@ -43,7 +43,6 @@ https://github.com/razrabVkedah/Rusleo.Utils.git
 * **Hotkeys System** — единый набор горячих клавиш (с fallback в меню Unity).
 * **Shortcut Viewer** — окно для просмотра и поиска всех хоткеев.
 * **Gradient Window** — редактор градиентов с JSON-импортом/экспортом.
-* **PlayerPrefs Visualizer** — удобный просмотр и редактирование `PlayerPrefs`.
 * **Editor Icon Browser** — просмотр встроенных иконок Unity (с поиском).
 
 ---
@@ -96,7 +95,6 @@ Rusleo.Utils
  ┣ Editor
  ┃ ┣ Hotkeys
  ┃ ┣ Windows
- ┃ ┣ PlayerPrefs
  ┃ ┣ Gradient
  ┃ ┗ IconBrowser
  ┗ Tests

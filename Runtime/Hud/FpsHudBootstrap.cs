@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Rusleo.Utils.Runtime.Hud.Metrics;
 using Rusleo.Utils.Runtime.Logging;
@@ -19,7 +19,11 @@ namespace Rusleo.Utils.Runtime.Hud
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void AutoInit()
         {
-            
+            if (!Debug.isDebugBuild)
+            {
+                return;
+            }
+
             Log.Debug("Rusleo.Utils.Runtime.HudBootstrap AutoInit");
 
             if (FindObjectOfType<FpsHudBootstrap>() != null) return;
